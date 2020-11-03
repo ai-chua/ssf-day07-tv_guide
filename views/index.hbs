@@ -1,0 +1,16 @@
+<div class="shows-wrapper">
+  {{#each showsArr}}
+  <a href="/tv_show/{{this.tvid}}">
+    <div class="show-card d-flex flex-column align-items-center p-4 text-dark">
+      <img src="{{{this.image}}}" width="240px" alt="" class="mb-2">
+      {{this.name}}
+    </div>
+  </a>
+  {{/each}}
+</div>
+
+<!-- <form action="/">
+  <input type="hidden" name="offset" value="">
+  <button type="submit" name="prevOffset" value="{{prevOffset}}" class="btn btn-dark"><i class="fas fa-chevron-circle-left"></i></button>
+  <button type="submit" name="nextOffset" value="{{nextOffset}}" class="btn btn-dark"><i class="fas fa-chevron-circle-right"></i></button>
+</form> -->
