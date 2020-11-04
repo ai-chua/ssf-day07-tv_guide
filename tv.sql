@@ -1,10 +1,10 @@
 select 'Creating database...' as '';
 
-drop database if exists leisure;
+drop database if exists tvvvvv;
 
-create database leisure;
+create database tvvvvv;
 
-use leisure;
+use tvvvvv;
 
 select 'Creating tables...' as '';
 

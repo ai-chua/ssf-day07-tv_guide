@@ -17,36 +17,12 @@ const SQL_FIND_TV_SHOW_BY_TVID = 'SELECT * FROM tv_shows WHERE tvid = ?'
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT) || 3306,
-  database: process.env.DB_NAME || 'tvvvvv',
+  database: process.env.DB_NAME || 'leisure',
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT),
   timezone: '+08:00'
 })
-
-const makeQuery = (sqlQuery, pool) => {
-  const f = async (req, res) => {
-    const conn = await pool.getConnection()
-    try {
-      const result = await conn.query(sqlQuery, [12, 0])
-      const showsArr = result[0]
-      console.info(showsArr)
-      res.status(200)
-      res.type('text/html')
-      res.render('index', {
-        showsArr: showsArr
-      })
-    } catch(e) {
-      res.status(500)
-      res.type('text/html')
-      res.send('<h2>Error</h2>' + e)
-    } finally {
-      console.info('Releasing connection')
-      conn.release()
-    }
-  }
-  return f
-}
 
 const startApp = async (app, pool) => {
   try {
@@ -78,7 +54,31 @@ app.set('views', __dirname + '/views')
 app.use(express.static(__dirname + '/static'))
 
 // Match Routes
-app.get(['/', 'index.html'], makeQuery(SQL_LIST_TV_SHOWS_IN_DESC, pool))
+app.get(['/', 'index.html'], async (req, res) => {
+  const conn = await pool.getConnection()
+  // const offset = parseInt(req.query.offset) || 0
+  // const limit = 12
+  try {
+    const result = await conn.query(SQL_LIST_TV_SHOWS_IN_DESC, [12, 0])
+    const showsArr = result[0]
+    console.info(showsArr)
+    res.status(200)
+    res.type('text/html')
+    res.render('index', {
+      showsArr: showsArr
+      // offset: offset,
+      // nextOffset: limit + offset,
+      // prevOffset: Math.max(0, (offset - limit))
+      })
+  } catch(e) {
+    res.status(500)
+    res.type('text/html')
+    res.send('<h2>Error</h2>' + e)
+  } finally {
+    console.info('Releasing connection')
+    conn.release()
+  }
+})
 
 app.get('/tv_show/:tv_id', async (req, res) => {
   const tv_id = req.params.tv_id
